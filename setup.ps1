@@ -25,12 +25,6 @@ $content = Get-Content -Path ".\templates\wordpress-compose.yml" -Raw
 $content = $content -replace '\{DOMAIN\}', $Domain
 $content | Set-Content -Path ".\wordpress-compose.yml"
 
-Write-Host "Updating ngix with domain $Domain" -ForegroundColor Blue
-Write-Host ""
-$content = Get-Content -Path ".\templates\nginx.conf" -Raw
-$content = $content -replace '\{DOMAIN\}', $Domain
-$content | Set-Content -Path ".\nginx.conf"
-
 Write-Host "Updating apache2 for SSL with domain $Domain" -ForegroundColor Blue
 Write-Host ""
 $content = Get-Content -Path ".\templates\default-ssl.conf" -Raw
@@ -51,7 +45,6 @@ else {
     Add-Content -Path $hostsFilePath -Value "$ipAddress $Domain"
     Write-Host "$Domain added to the hosts file."
 }
-
 
 Write-Host "Starting Containers" -ForegroundColor Blue
 Write-Host ""
@@ -75,24 +68,6 @@ Write-Host ""
 #docker exec -it wp sh -c 'echo "ServerName 127.0.0.1" | tee -a /etc/apache2/conf-available/servername.conf' > $null
 docker exec -it wp sh -c 'echo "ServerName 127.0.0.1" | tee -a /etc/apache2/apache2.conf'
 
-# Write-Host "Installing extensions for domain $Domain in wp" -ForegroundColor Blue
-# Write-Host ""
-# docker exec -it wp sh -c 'docker-php-ext-install mysqli pdo pdo_mysql zip mbstring' > $null
-# docker exec -it wp sh -c 'a2enconf servername' > $null
-
-
-# do {
-#     $output = docker exec -it wp sh -c 'ps aux | grep apache2' 2>&1
-#     if ($output -match "apache2") {
-#         break
-#     }
-#     else {
-#         Write-Host "Apache2 service is not running yet. Waiting..."
-#         Start-Sleep -Seconds 10
-#     }
-# } until ($false)
-
-
 Write-Host "Enabling SSL for domain $Domain in wp" -ForegroundColor Blue
 Write-Host ""
 docker exec -it wp sh -c 'a2enmod ssl'
@@ -110,17 +85,11 @@ do {
 } until ($false)
 
 docker exec -it wp sh -c 'service apache2 restart' > $null
-#docker exec -it wp sh -c 'service apache2 stop' > $null
-
-# docker exec -it wp sh -c 'a2enmod rewrite' > $null
-# docker exec -it wp sh -c 'a2enmod ssl' > $null
-# docker exec -it wp sh -c 'service apache2 reload' > $null
 
 Write-Host ""
 Write-Host "MyPHPAdmin: User:admin Password:password!" -ForegroundColor Cyan
 Write-Host "MySql: User:wordpress Password:wordpress RootPsw: password!" -ForegroundColor Cyan
 Write-Host "Initial Wordpress: User:wordpress Password:wordpress!" -ForegroundColor Cyan
 Write-Host ""
-#Write-Host "Wordpress site running at http://$($Domain):8282" -ForegroundColor Green
-Write-Host "Wordpress site running at https://$($Domain):8585" -ForegroundColor Green
+Write-Host "Wordpress site running at https://$($Domain)" -ForegroundColor Green
 
