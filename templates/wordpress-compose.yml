@@ -51,7 +51,7 @@ services:
     volumes:
       - ../kubedata/wp:/var/www/html/wp-content
       - ../kubedata/www:/var/www/html
-      #- ../kubedata/certs:/etc/ssl/certs:ro
+      - ../kubedata/certs:/etc/ssl/certs:ro
       #- ./default-ssl.conf:/etc/apache2/sites-available/default-ssl.conf:ro
       #- ./docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh:ro
     ports:

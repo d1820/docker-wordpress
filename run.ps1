@@ -49,6 +49,6 @@ Write-Host "MyPHPAdmin: User:admin Password:password!" -ForegroundColor Cyan
 Write-Host "MySql: User:wordpress Password:wordpress RootPsw: password!" -ForegroundColor Cyan
 Write-Host "Initial Wordpress: User:wordpress Password:wordpress!" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "Wordpress site running at http://$Domain:8282" -ForegroundColor Green
-Write-Host "Wordpress site running at https://$Domain:8585" -ForegroundColor Green
+Write-Host "Wordpress site running at http://$($Domain):8282" -ForegroundColor Green
+Write-Host "Wordpress site running at https://$($Domain):8585" -ForegroundColor Green
 
