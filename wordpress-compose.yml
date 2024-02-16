@@ -35,20 +35,6 @@ services:
     networks:
       - wp
 
-  # proxy:
-  #   image: nginx:1.19.10-alpine
-  #   container_name: "proxy"
-  #   ports:
-  #     - 80:80
-  #     - 443:443
-  #   volumes:
-  #     - "./nginx.conf:/etc/nginx/nginx.conf"
-  #     - ../kubedata/certs:/etc/nginx/certs
-  #   depends_on:
-  #     - wordpress
-  #   networks:
-  #     - wp
-
   wordpress:
     image: wordpress:latest
     depends_on:
@@ -59,7 +45,6 @@ services:
       - ../kubedata/www:/var/www/html
       - ../kubedata/certs:/etc/ssl/certs:ro
       - ./default-ssl.conf:/etc/apache2/sites-available/default-ssl.conf:ro
-      #- ./docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh:ro
     ports:
       - "80:80"
       - "443:443"
@@ -76,21 +61,6 @@ services:
 
 networks:
   wp:
-  # certbot:
-  #   image: certbot/certbot:latest
-  #   container_name: "certbot"
-  #   depends_on:
-  #     - db
-  #   ports:
-  #     - "8484:80"
-  #     - "4433:443"
-  #   volumes:
-  #     - ../kubedata/certbot/www/:/var/www/certbot
-  #     - ../kubedata/www:/var/www/html
-  #     - ../kubedata/certbot/letsencrypt/:/etc/letsencrypt
-  #   command: certonly --webroot --webroot-path=/var/www/html --email dt1820@gmail.com --non-interactive --agree-tos --no-eff-email --force-renewal -d localhost -d www.localhost
-
-
 
 
 

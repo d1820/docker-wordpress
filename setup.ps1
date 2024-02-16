@@ -64,7 +64,7 @@ do {
 
 Write-Host "Setting domain $Domain in wp servername.conf" -ForegroundColor Blue
 Write-Host ""
-# docker exec -it wp sh -c 'echo "127.0.0.1	leslierae.com localhost"  | tee /etc/hosts'
+# docker exec -it wp sh -c 'echo "127.0.0.1	$Domain localhost"  | tee /etc/hosts'
 #docker exec -it wp sh -c 'echo "ServerName 127.0.0.1" | tee -a /etc/apache2/conf-available/servername.conf' > $null
 docker exec -it wp sh -c 'echo "ServerName 127.0.0.1" | tee -a /etc/apache2/apache2.conf'
 
