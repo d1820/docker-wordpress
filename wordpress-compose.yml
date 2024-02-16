@@ -17,6 +17,8 @@ services:
     expose:
       - 3306
       - 33060
+    networks:
+      - wp
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
@@ -25,23 +27,27 @@ services:
       - db
     restart: always
     environment:
-      PMA_HOST: db
+      PMA_HOST: db:3306
       PMA_USER: admin
       PMA_PASSWORD: password!
     ports:
       - "8383:80"
+    networks:
+      - wp
 
-  proxy:
-    image: nginx:1.19.10-alpine
-    container_name: "proxy"
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - "./nginx.conf:/etc/nginx/nginx.conf"
-      - ../kubedata/certs:/etc/nginx/certs
-    depends_on:
-      - wordpress
+  # proxy:
+  #   image: nginx:1.19.10-alpine
+  #   container_name: "proxy"
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+  #   volumes:
+  #     - "./nginx.conf:/etc/nginx/nginx.conf"
+  #     - ../kubedata/certs:/etc/nginx/certs
+  #   depends_on:
+  #     - wordpress
+  #   networks:
+  #     - wp
 
   wordpress:
     image: wordpress:latest
@@ -52,20 +58,24 @@ services:
       - ../kubedata/wp:/var/www/html/wp-content
       - ../kubedata/www:/var/www/html
       - ../kubedata/certs:/etc/ssl/certs:ro
-      #- ./default-ssl.conf:/etc/apache2/sites-available/default-ssl.conf:ro
+      - ./default-ssl.conf:/etc/apache2/sites-available/default-ssl.conf:ro
       #- ./docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh:ro
     ports:
-      - "8282:80"
-      - "8585:443"
+      - "80:80"
+      - "443:443"
     restart: always
     environment:
-      - WORDPRESS_DB_HOST=db
+      - WORDPRESS_DB_HOST=db:3306
       - WORDPRESS_DB_USER=wordpress
       - WORDPRESS_DB_PASSWORD=wordpress
       - WORDPRESS_DB_NAME=wordpress
-      - WORDPRESS_WEBSITE_URL="http://leslierae.com"
-      - WORDPRESS_WEBSITE_URL_WITHOUT_HTTP=leslierae.com
+      - WORDPRESS_WEBSITE_URL="https://localhost"
+      - WORDPRESS_WEBSITE_URL_WITHOUT_HTTP=localhost
+    networks:
+      - wp
 
+networks:
+  wp:
   # certbot:
   #   image: certbot/certbot:latest
   #   container_name: "certbot"
@@ -78,7 +88,7 @@ services:
   #     - ../kubedata/certbot/www/:/var/www/certbot
   #     - ../kubedata/www:/var/www/html
   #     - ../kubedata/certbot/letsencrypt/:/etc/letsencrypt
-  #   command: certonly --webroot --webroot-path=/var/www/html --email dt1820@gmail.com --non-interactive --agree-tos --no-eff-email --force-renewal -d leslierae.com -d www.leslierae.com
+  #   command: certonly --webroot --webroot-path=/var/www/html --email dt1820@gmail.com --non-interactive --agree-tos --no-eff-email --force-renewal -d localhost -d www.localhost
 
 
 
