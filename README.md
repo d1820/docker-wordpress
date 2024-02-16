@@ -2,6 +2,8 @@
 
 This repo handles creating a local running docker instance that can be used as a staging environment for changes to PRODUCTION.
 
+Why this repo? Cause this one actually works!! 😂
+
 ## Prepare for creating a staging site
 
 - In your production environment install the UpDraft plugin and create a backup of everything
