@@ -1,0 +1,88 @@
+services:
+  db:
+    image: mysql:8.0.27
+    container_name: "mysql"
+    command: "--default-authentication-plugin=mysql_native_password"
+    volumes:
+      - ../kubedata/mysql:/var/lib/mysql
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=password!
+      - MYSQL_DATABASE=wordpress
+      - MYSQL_USER=wordpress
+      - MYSQL_PASSWORD=wordpress
+    ports:
+      - "3306:3306"
+      - "33060:33060"
+    expose:
+      - 3306
+      - 33060
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: "phpmyadmin"
+    depends_on:
+      - db
+    restart: always
+    environment:
+      PMA_HOST: db
+      PMA_USER: admin
+      PMA_PASSWORD: password!
+    ports:
+      - "8383:80"
+
+  proxy:
+    image: nginx:1.19.10-alpine
+    container_name: "proxy"
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - "./nginx.conf:/etc/nginx/nginx.conf"
+      - ../kubedata/certs:/etc/nginx/certs
+    depends_on:
+      - wordpress
+
+  wordpress:
+    image: wordpress:latest
+    depends_on:
+      - db
+    container_name: "wp"
+    volumes:
+      - ../kubedata/wp:/var/www/html/wp-content
+      - ../kubedata/www:/var/www/html
+      #- ../kubedata/certs:/etc/ssl/certs:ro
+      #- ./default-ssl.conf:/etc/apache2/sites-available/default-ssl.conf:ro
+      #- ./docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh:ro
+    ports:
+      - "8282:80"
+      - "8585:443"
+    restart: always
+    environment:
+      - WORDPRESS_DB_HOST=db
+      - WORDPRESS_DB_USER=wordpress
+      - WORDPRESS_DB_PASSWORD=wordpress
+      - WORDPRESS_DB_NAME=wordpress
+      - WORDPRESS_WEBSITE_URL="http://{DOMAIN}"
+      - WORDPRESS_WEBSITE_URL_WITHOUT_HTTP={DOMAIN}
+
+  # certbot:
+  #   image: certbot/certbot:latest
+  #   container_name: "certbot"
+  #   depends_on:
+  #     - db
+  #   ports:
+  #     - "8484:80"
+  #     - "4433:443"
+  #   volumes:
+  #     - ../kubedata/certbot/www/:/var/www/certbot
+  #     - ../kubedata/www:/var/www/html
+  #     - ../kubedata/certbot/letsencrypt/:/etc/letsencrypt
+  #   command: certonly --webroot --webroot-path=/var/www/html --email dt1820@gmail.com --non-interactive --agree-tos --no-eff-email --force-renewal -d {DOMAIN} -d www.{DOMAIN}
+
+
+
+
+
+
+
