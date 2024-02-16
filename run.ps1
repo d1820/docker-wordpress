@@ -4,6 +4,12 @@ param(
     [string]$Domain
 )
 
+Write-Host "Building Folder Structure" -ForegroundColor Blue
+New-Item -ItemType Directory -Path "../kubedata/mysql" -Force
+New-Item -ItemType Directory -Path "../kubedata/certs" -Force
+New-Item -ItemType Directory -Path "../kubedata/wp" -Force
+New-Item -ItemType Directory -Path "../kubedata/www" -Force
+
 Write-Host "Installing MkCert" -ForegroundColor Blue
 Write-Host ""
 choco install mkcert  > $null
