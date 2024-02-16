@@ -1,6 +1,6 @@
 # docker-wordpress
 
-This repo handles creating a local running docker instance that can be used as a staging environment for changes to PRODUCTION.
+This repo handles creating a local running docker instance that can be used as a staging environment for changes to PRODUCTION. THis is setup to keep SSL in play so you can edit pages and post with the editor.
 
 Why this repo? Cause this one actually works!! 😂
 
